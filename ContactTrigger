@@ -1,0 +1,13 @@
+trigger ContactTrigger on Contact (before insert) {
+    if(Trigger.isBefore && Trigger.isInsert){
+       for (Contact con : Trigger.new) {
+        if (String.isBlank(con.Source__c)) {
+            con.Source__c = 'Manual Entry';
+        }
+
+        if (String.isBlank(con.Email)) {
+            con.Email.addError('Email is required when creating a Contact.');
+        }
+    }
+    }
+}
