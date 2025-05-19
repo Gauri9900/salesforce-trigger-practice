@@ -1,0 +1,47 @@
+@isTest
+public class ContactTriggerTest {
+	 @isTest
+    static void duplicateEmail_fail(){
+         // Step 1: Insert an existing contact
+        Contact existing = new Contact();
+        existing.LastName = 'Test';
+        existing.Email ='abc@gmail.com';
+        insert existing;
+        
+        // Step 2: Try to insert a contact with the same email
+		Contact duplicateCon = new Contact();
+        duplicateCon.LastName = 'Test 1';
+        duplicateCon.Email = 'abc@gmail.com';  //same as existing email in system
+        
+        Test.startTest();
+        try{
+            insert duplicateCon;
+            System.assert(false,'Expected exception due to duplicate email');
+        }
+        catch(exception ex){
+            System.assert(ex.getMessage().contains('A contact with this email already exists'), 'Error message mismatch');
+        }
+        Test.stopTest();
+    }
+    
+    @isTest
+    static void test_UnqiueEmail(){
+        // Step 1: Insert an existing contact
+        Contact newCon = new Contact();
+        newCon.LastName = 'Test';
+        newCon.Email ='abc@gmail.com';
+        insert newCon;
+        
+        // Step 2: Try to insert a contact with the same email
+		Contact uniqueCon = new Contact();
+        uniqueCon.LastName = 'Test 1';
+        uniqueCon.Email = 'unique@gmail.com';
+        
+        Test.startTest();
+        insert uniqueCon;
+        Test.stopTest();
+        
+        Contact insertedCon = [SELECT Name, Email from Contact where Email =:newCon.Id];
+        System.assertEquals('unique@gmail.com',insertedCon.Email);
+    }
+}
