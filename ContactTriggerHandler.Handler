@@ -1,0 +1,30 @@
+public class ContactTriggerHandler {
+    public static void duplicateEmail(List<Contact> conList){
+        // Step 1: Collect all emails from incoming records (ignore nulls)
+        Set<String> incomingEmails = new Set<String>();
+        for(Contact con : conList){
+            if(String.isnotBlank(con.Email)){
+                incomingEmails.add(con.Email.toLowerCase());
+            }
+            
+            if(incomingEmails.isEmpty())
+                return;
+            
+          // Step 2: Query existing contacts with these emails
+            Map<String, Contact> existingEmailMap = new Map<String, Contact>();
+            for(Contact existingEmail : [SELECT Name, Email from Contact where Email in :incomingEmails]){
+                if(existingEmail != null)
+              		existingEmailMap.put(existingEmail.Email.toLowerCase(), existingEmail);
+            } 
+            
+            // Step 3: Add error to incoming records if duplicate email found
+            for(Contact cont : conList){
+                if(String.isNotBlank(cont.Email)){
+                    if(existingEmailMap.containsKey(cont.Email.toLowerCase())){
+                        cont.Email.addError('A contact with same Email already exists, please use different email');
+                    }
+                }
+            }
+		}
+    }
+}
