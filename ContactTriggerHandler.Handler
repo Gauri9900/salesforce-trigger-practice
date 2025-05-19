@@ -1,0 +1,13 @@
+public class ContactTriggerHandler {
+    public static void sendEmail(List<Contact> cont){
+        for (Contact con : cont) {
+        if (String.isBlank(con.Source__c)) {
+            con.Source__c = 'Manual Entry';
+        }
+
+        if (String.isBlank(con.Email)) {
+            con.Email.addError('Email is required when creating a Contact.');
+        }
+    }
+}
+}
